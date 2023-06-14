@@ -2,7 +2,7 @@
   "name": "go-chat-node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +14,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
-    "mysql": "^2.18.1"
+    "http": "^0.0.1-security",
+    "mysql": "^2.18.1",
+    "process": "^0.11.10",
+    "socket.io": "^4.6.2"
   }
 }
