@@ -11,6 +11,7 @@ const routes = require('./routes');
 const app = express();
 const http = require('http');
 const { disconnect } = require('process');
+app.set('port', process.env.PORT);
 const server = http.createServer(app);
 const {Server} = require("socket.io");
 
@@ -39,10 +40,8 @@ app.post('/message', routes.gochat.postMessage);
 
 io.on('connection', (socket) => {
     // Join a Hard Coded Chat for Now
-    socket.join(socket?.user?.id);
-    socket.join('abcxyzpqr');
-    // Find user's all channels from the database and call join event on all of them. (In next stage)
-    console.log('a user connected');
+    // socket.join('abcxyzpqr');
+    // console.log('a user connected');
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
@@ -56,17 +55,18 @@ io.on('connection', (socket) => {
       socket.join(chatId);
     });
   
-    socket.on('message', ({message, chatId}, callback) => {
-      console.log('message: ' + message + ' in ' + chatId);
+    socket.on('message', (roomObject, callback) => {
+      // console.log("ROOM IN SEREVR: ", roomObject);
+      console.log('message: ' + roomObject.message + ' in ' + roomObject.roomName);
   
       // generate data to send to receivers
       const outgoingMessage = {
         name: socket.user?.name,
         id: socket.user?.id,
-        message: message,
+        message: roomObject.message,
       };
       // send socket to all in chatId except sender
-      socket.to(chatId).emit("message", outgoingMessage);
+      socket.to(roomObject.roomName).emit("message", outgoingMessage);
       callback({
         status: "ok"
       });
@@ -76,7 +76,11 @@ io.on('connection', (socket) => {
   });
 
 
+// SHOULD BE COMMENTED WHILE RUNNING TESTS
 server.listen(process.env.PORT, (err) => {
     if (err) console.log("Error in Server!!!");
     console.log("Listening on PORT: ", process.env.PORT);
 });
+
+// Should be used when trying to run tests
+module.exports = server;
